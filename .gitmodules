@@ -1,0 +1,3 @@
+[submodule "sublee-sphinx-themes"]
+	path = sublee-sphinx-themes
+	url = git@github.com:sublee/sublee-sphinx-themes.git
