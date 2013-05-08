@@ -1,6 +1,6 @@
-===============
-The Salt Book
-===============
+==============================
+Django Deployment Using Salt
+==============================
 
 Welcome to the online version of The Salt Book, a free book about Salt Stack.
 

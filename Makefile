@@ -77,17 +77,17 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/TheSaltBook.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/DjangoDeploymentUsingSalt.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/TheSaltBook.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/DjangoDeploymentUsingSalt.qhc"
 
 devhelp:
 	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/TheSaltBook"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/TheSaltBook"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/DjangoDeploymentUsingSalt"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/DjangoDeploymentUsingSalt"
 	@echo "# devhelp"
 
 epub:

@@ -1,5 +1,5 @@
 # Basic project info
-project = u'The Salt Book'
+project = u'Django Deployment Using Salt'
 copyright = u'Nick Lang, et al.'
 version = '0.1'
 release = '0.1'
@@ -18,23 +18,23 @@ pygments_style = 'sphinx'
 html_use_index = False          # FIXME once proper index directives are added.
 html_show_sourcelink = False
 html_show_sphinx = False
-html_title = "The Salt Book"
+html_title = "Django Deployment Using Salt"
 html_add_permalinks = False     # FIXME once styles are fixed to get the hover back.
 
 # LATEX builder
 latex_documents = [
-  ('index', 'TheSaltBook.tex', u'The Salt Book',
+  ('index', 'DjangoDeploymentUsingSalt.tex', u'Django Deployment Using Salt',
    u'Nick Lang, et al.', 'manual'),
 ]
 
 # texinfo builder
 texinfo_documents = [
-    ('index', 'TheSaltBook.tex', u'The Salt Book',
+    ('index', 'DjangoDeploymentUsingSalt.tex', u'Django Deployment Using Salt',
      u'Nick Lang, et al.', 'manual'),
     ]
 
 # ePub builder
-epub_title = u'The Salt Book'
+epub_title = u'Django Deployment Using Salt'
 epub_author = u'Nick Lang, et al.'
 epub_publisher = u'Nick Lang, et al.'
 epub_copyright = u'Nick Lang, et al.'
