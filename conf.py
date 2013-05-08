@@ -1,3 +1,5 @@
+import sphinx_bootstrap_theme
+
 # Basic project info
 project = u'Django Deployment Using Salt'
 copyright = u'Nick Lang, et al.'
@@ -11,8 +13,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # HTML options
-html_theme = 'djangobook'
-html_theme_path = ['themes']
+html_theme = 'bootstrap'
+html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+#html_theme_path = ['themes']
 html_static_path = ['_static']
 pygments_style = 'sphinx'
 html_use_index = False          # FIXME once proper index directives are added.
