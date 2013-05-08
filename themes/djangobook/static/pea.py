@@ -2,14 +2,14 @@
 """peastat - simple live web stats
 http://www.throwingbeans.org/peastat/
 
-instructions: 
+instructions:
 1. configure the 'logfile' and 'rooturl' values below
 2. upload peastat.py somewhere it can be executed on your web server (e.g. your cgi-bin)
 3. make peastat.py executable (set its permissions to 755)
 """
 __version__ = "0.2"
 __author__ = "Tom Dyson (tomdyson at spamcop dot net)"
-__copyright__ = "(C) 2005 Tom Dyson. GNU GPL 2." 
+__copyright__ = "(C) 2005 Tom Dyson. GNU GPL 2."
 __url__ = 'http://www.throwingbeans.org/peastat/'
 
 import cgitb
@@ -19,14 +19,14 @@ try: import dbm # anydbm is unreliable...
 except: import dumbdbm as dbm
 
 # start configuring:
-logfile = "/home/jacob/web/log/djangobook.com/www.log" # full path to log file
-rooturl = "http://www.djangobook.com/" # root url of site whose logs we're analysing
+logfile = "/Users/nicklang/web/log/saltbook/www.log" # full path to log file
+rooturl = "http://www.saltbook.com/" # root url of site whose logs we're analysing
 # configure if you want to:
 minresults = 10 # minimum results to include in overview
 lastlines = 5000 # number of most recent requests to analyse
 ispage = re.compile('/$').search # requests matching this regex count as pages
 ignorelines = re.compile('24\.124\.4\.220').search # ignore lines including this regex
-recentreferrers = 20 # show this many recent referrers 
+recentreferrers = 20 # show this many recent referrers
 recentsearches = 20 # show this many recent search terms
 database = "/tmp/jkmpeastat.db" # store DNS lookups here
 # stop configuring
@@ -43,7 +43,7 @@ if form.has_key( "url" ): url = form["url"].value
 if form.has_key( "ip" ): ip = form["ip"].value
 if form.has_key( "atom" ): atom = True
 
-def justdomain(url): 
+def justdomain(url):
 	# Return only the domain of a URL
 	try:
 		return url.split('//')[1].split('/')[0]
@@ -58,25 +58,25 @@ def sortByValue(d):
     backitems=[ [v[1],v[0]] for v in items]
     backitems.sort(); backitems.reverse()
     return [ backitems[i][1] for i in range(0,len(backitems))]
-    
+
 def tailLines(filename,linesback):
-	"""python tail - modified from recipe at 
+	"""python tail - modified from recipe at
 		http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/157035
 		returns list of [linesback] lines from end of [filename]"""
 	avgcharsperline=150
-	
+
 	file = open(filename,'r')
 	while 1:
 		try: file.seek(-1 * avgcharsperline * linesback,2)
-		except IOError: file.seek(0) 
-		if file.tell() == 0: atstart=1 
+		except IOError: file.seek(0)
+		if file.tell() == 0: atstart=1
 		else: atstart=0
 		lines=file.read().split("\n")
 		if (len(lines) > (linesback+1)) or atstart: break
 		#The lines are bigger than we thought
 		avgcharsperline=avgcharsperline * 1.3 #Inc avg for retry
 	file.close()
-	
+
 	if len(lines) > linesback: start=len(lines)-linesback -1
 	else: start=0
 	return lines[start:len(lines)-1]
@@ -95,19 +95,19 @@ def getDNS(ip):
 		db = dbm.open(database, "c")
 		if db.has_key(ip): addr = db[ip]
 		else: addr = ip
-		db.close()	
+		db.close()
 	except: addr = ip
 	return addr
 
 def getLogLines(logfile):
 	try: logLines = tailLines(logfile,lastlines)
 	except: # or try system's tail
-		logLines = os.popen('/usr/bin/tail -n ' 
+		logLines = os.popen('/usr/bin/tail -n '
 		+ str(lastlines) + ' ' + logfile).readlines()
 	if len(logLines) == 0: # can't handle popen exceptions properly
 		raise Exception ('No lines found')
 	return logLines
-	
+
 loglines = getLogLines(logfile)
 
 def getOverview():
@@ -120,7 +120,7 @@ def getOverview():
 	referrers = []
 	queries = {}
 	timeoffirsthit = loglines[0].split(' ')[3].replace('[','')
-	
+
 	for line in loglines:
 		resource = line.split(' ')[6]
 		if ispage(resource) and not ignorelines(line):
@@ -135,15 +135,15 @@ def getOverview():
 				if referrer.count(".yahoo."):
 					q = querydict.get("p")
 				else: q = querydict.get("q")
-				if q: 
+				if q:
 					q = q[0].lower()
 					queries[q] = queries.get(q,0) + 1
 				referrers.append([referrer, q])
-				
+
 	t1 = time.time()
 	overview["timing"] = int((t1 - t0) * 1000)
 	overview["logfile"] = logfile
-	overview["timeoffirsthit"] = timeoffirsthit	
+	overview["timeoffirsthit"] = timeoffirsthit
 	overview["hits"] = hits
 	overview["lastrequest"] = lastres
 	overview["pagecount"] = pagecount
@@ -153,9 +153,9 @@ def getOverview():
 	pagehitsperhour = pagecount / (hourssince + ( float(minutessince) / 60 ))
 	overview["hourssince"], overview["minutessince"] = hourssince, minutessince
 	overview["pagehitsperhour"] = int(round(pagehitsperhour))
-	
+
 	return overview
-	
+
 def displayOverviewHTML(overview):
 	print """
 		<p class = "section"><strong>Summary</strong><br />
@@ -171,12 +171,12 @@ def displayOverviewHTML(overview):
 	for res in sortByValue(hits):
 		score = hits[res]
 		if score >= minresults:
-			print """%s: 
+			print """%s:
 				<a href = "%s?url=%s">%s</a>
 				<br />""" % (res, overview["cgiloc"], urllib.quote(res), score)
-	
+
 	print  """</p><p class = "section"><strong>%s recent referrers</strong><br />""" % recentreferrers
-	
+
 	referrers = overview["referrers"]
 	referrers.reverse()
 	for referrer, query in referrers[0:recentreferrers]:
@@ -185,14 +185,14 @@ def displayOverviewHTML(overview):
 		if query: print "<i> - %s</i>" % query
 		print "<br />"
 	print "</p>"
-	
+
 	print  """<p class = "section"><strong>%s recent popular search terms</strong><br />""" % recentsearches
-	
+
 	queries = overview["queries"]
 	for query in sortByValue(queries)[0:recentsearches]:
 		query_score = queries[query]
 		quoted_query = query.replace('"','%22')
-		print """<a href = "http://www.google.com/search?q=%(quoted_query)s">%(query)s</a>: 
+		print """<a href = "http://www.google.com/search?q=%(quoted_query)s">%(query)s</a>:
 			%(query_score)s<br />""" % vars()
 	print "</p>"
 
@@ -211,7 +211,7 @@ def urldetails(url, cgiloc):
 			<br />""" % vars()
 			counter = counter + 1
 	print "</p>"
-			
+
 def ipdetails(ip, cgiloc):
 
 	import socket
@@ -235,7 +235,7 @@ def ipdetails(ip, cgiloc):
 				referrer = line.split('"')[-4]
 				user_agent = line.split('"')[-2]
 				if len(user_agent) > 50: user_agent = user_agent[0:50].strip() + "..."
-				if len(referrer) > 1: 
+				if len(referrer) > 1:
 					print """<b>referrer:</b> <a href = "%(referrer)s">%(referrer)s</a><br />""" % vars()
 				print """<b>browser:</b> %(user_agent)s<br /><br />""" % vars()
 			if ispage(resource):
@@ -244,11 +244,11 @@ def ipdetails(ip, cgiloc):
 				<br />""" % vars()
 				pagecounter += 1
 			counter += 1
-	print "</p>"	
+	print "</p>"
 
 def header():
 	print "Content-type: text/html\n\n"
-	print """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+	print """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 		<head>
@@ -263,8 +263,8 @@ def header():
 					background-color: #F5F5F5;
 					text-align: center;
 					font-family: 'Lucida Grande', 'Lucida Sans Unicode', Lucida, 'Trebuchet MS', Trebuchet, Verdana, Geneva, Arial, Helvetica, sans-serif;
-					#border-color: #CCF; border-width: 6px; border-style: dotted none none none; 
-					border-color: white; border-width: 8px; border-style: dotted none none none; 
+					#border-color: #CCF; border-width: 6px; border-style: dotted none none none;
+					border-color: white; border-width: 8px; border-style: dotted none none none;
 					font-size: small;
 					color: #333;line-height: 150%;
 				}
@@ -301,7 +301,7 @@ def header():
 							req.send();
 						}
 					}
-				}    
+				}
 				function jahDone(target) {
 					// only if req is "loaded"
 					if (req.readyState == 4) {
@@ -317,13 +317,13 @@ def header():
 			</script>
 		</head>
 		<body><div id = "container">"""
-	
+
 	print """<h4><a href = "%s">peastat</a></h4>""" % (cgiloc)
-		
+
 def footer(): print """
 	<p class = "greysection">
-		peastat %s 
-		&copy; <a href = "http://www.throwingbeans.org/">tom dyson</a> 2005 // 
+		peastat %s
+		&copy; <a href = "http://www.throwingbeans.org/">tom dyson</a> 2005 //
 		<a href = "http://www.throwingbeans.org/peastat/">updates, bugs, suggestions</a>
 	</p>
 	</div></body></html>""" % (__version__)
@@ -339,7 +339,7 @@ def atomHeader():
 			<updated>%(timestamp)s</updated>
 			<author><name>peastat</name></author>
 			<id>http://%(basehref)s/</id>""" % vars()
-					
+
 def atomSummary(overview):
 	basehref = server_name + request_uri
 	cleanurl = rooturl.replace("http://","")
@@ -351,11 +351,11 @@ def atomSummary(overview):
 		<updated>%(timestamp)s</updated>
 		<content type="xhtml">
       		<div xmlns="http://www.w3.org/1999/xhtml">""" % vars()
-			
+
 	displayOverviewHTML(overview)
-			
+
 	print """</div></content></entry>"""
-			
+
 def atomFooter():
 	print "</feed>"
 
@@ -369,7 +369,7 @@ if __name__ == "__main__":
 		header()
 		if url: urldetails(url, cgiloc)
 		elif ip: ipdetails(ip, cgiloc)
-		else: 
+		else:
 			overview = getOverview()
 			displayOverviewHTML(overview)
 		footer()
