@@ -13,7 +13,6 @@ Welcome to the online version of The Salt Book, a free book about Salt Stack.
    pull request!
 
 __ http://github.com/fxdgear/salt_book
-__ http://github.com/fxdgear/salt_book
 
 .. toctree::
    :maxdepth: 1
